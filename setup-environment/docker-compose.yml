@@ -1,0 +1,40 @@
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3308:3306
+    volumes:
+      - "../data/mysql-data:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  python:
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "../api:/app"
+    ports:
+      - "8000:8000"

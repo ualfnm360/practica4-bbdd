@@ -1,0 +1,8 @@
+# Excluir pycache 
+__pycache__/
+
+# Excluir archivos de base de datos
+data/
+
+# Excluir archivos de entorno
+.env
