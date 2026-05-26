@@ -115,7 +115,134 @@ docker exec -it mysql mysql -u root -p
 - `dotenv` — carga de variables de entorno
 - `pydantic` — validación de datos
 - `pytz` — manejo de zonas horarias
+- 
+## 🛠️ Endpoints Implementados y Ejemplos de Uso
+A continuación se detallan los endpoints implementados, junto con ejemplos de peticiones y respuestas para cada uno.
 
+### 1. Obtener todos los libros
+- **Endpoint:** `GET /books`
+- **Descripción:** Devuelve una lista en formato JSON de todos los libros disponibles en la base de datos.
+- **Ejemplo de Petición:**
+  ```http
+  GET /books/
+  ```
+- **Ejemplo de Respuesta (200 OK):**
+  ```json
+  [
+    {
+      "id": 1,
+      "title": "El Quijote",
+      "author": "Miguel de Cervantes",
+      "publisher": "Editorial A",
+      "year": 1605,
+      "category": "Ficción"
+    }
+  ]
+  ```
+
+### 2. Crear un nuevo libro
+- **Endpoint:** `POST /books`
+- **Descripción:** Inserta un nuevo libro en la base de datos.
+- **Ejemplo de Petición (Body JSON):**
+  ```json
+  {
+    "title": "Dune",
+    "author": "Frank Herbert",
+    "publisher": "Acervo",
+    "year": 1965,
+    "category": "Ciencia"
+  }
+  ```
+- **Ejemplo de Respuesta (201 Created):**
+  ```json
+  {
+    "title": "Dune",
+    "author": "Frank Herbert",
+    "publisher": "Acervo",
+    "year": 1965,
+    "category": "Ciencia",
+    "id": 11
+  }
+  ```
+
+### 3. Obtener un libro por ID
+- **Endpoint:** `GET /books/{id}`
+- **Descripción:** Devuelve los detalles de un libro específico según su identificador único.
+- **Ejemplo de Petición:**
+  ```http
+  GET /books/11
+  ```
+- **Ejemplo de Respuesta (200 OK):**
+  ```json
+  {
+    "id": 11,
+    "title": "Dune",
+    "author": "Frank Herbert",
+    "publisher": "Acervo",
+    "year": 1965,
+    "category": "Ciencia"
+  }
+  ```
+
+### 4. Actualizar un libro
+- **Endpoint:** `PUT /books/{id}`
+- **Descripción:** Actualiza parcial o totalmente los campos de un libro existente.
+- **Ejemplo de Petición (Body JSON con los campos a modificar):**
+  ```json
+  {
+    "year": 2024
+  }
+  ```
+- **Ejemplo de Respuesta (200 OK):**
+  ```json
+  {
+    "message": "Libro actualizado correctamente"
+  }
+  ```
+
+### 5. Eliminar un libro
+- **Endpoint:** `DELETE /books/{id}`
+- **Descripción:** Elimina físicamente el registro de un libro mediante su ID, siempre que no viole restricciones de integridad (ej. si tiene ejemplares asociados).
+- **Ejemplo de Petición:**
+  ```http
+  DELETE /books/11
+  ```
+- **Ejemplo de Respuesta:** `204 No Content` *(Sin cuerpo en la respuesta)*
+
+### 6. Realizar un préstamo
+- **Endpoint:** `POST /loans`
+- **Descripción:** Inicia el préstamo de un ejemplar a un usuario. Invoca al procedimiento almacenado `RealizarPrestamo` que verifica disponibilidad y posibles sanciones.
+- **Ejemplo de Petición (Body JSON):**
+  ```json
+  {
+    "userId": 1,
+    "inventoryNumber": "INV005"
+  }
+  ```
+- **Ejemplo de Respuesta (201 Created / 200 OK):**
+  ```json
+  {
+    "message": "Préstamo realizado con éxito"
+  }
+  ```
+
+### 7. Devolver un préstamo
+- **Endpoint:** `POST /loans/return`
+- **Descripción:** Registra la devolución de un ejemplar previamente prestado invocando al procedimiento almacenado `DevolverLibro`. Este procedimiento evalúa si el usuario ha excedido el tiempo y le aplica sanciones si corresponde.
+- **Ejemplo de Petición (Body JSON):**
+  ```json
+  {
+    "userId": 1,
+    "inventoryNumber": "INV005"
+  }
+  ```
+- **Ejemplo de Respuesta (200 OK):**
+  ```json
+  {
+    "message": "Devolución realizada con éxito"
+  }
+  ```
+  
 ## Licencia
 
 Este proyecto está licenciado bajo la Licencia CC BY-NC-ND 4.0. Esto significa que puedes compartir el proyecto siempre que cites al autor, no lo uses para fines comerciales y no realices obras derivadas.
